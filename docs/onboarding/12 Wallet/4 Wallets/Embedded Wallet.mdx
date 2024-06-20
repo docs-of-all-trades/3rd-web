@@ -1,0 +1,158 @@
+---
+slug: /wallet/embedded-wallet
+title: Embedded Wallet
+sidebar_position: 5
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import CodeBlock from "@theme/CodeBlock";
+
+Prompt users to connect to your app using their email with [Embedded Wallet](/embedded-wallet).
+
+## Usage
+
+```javascript
+import { EmbeddedWallet } from "@thirdweb-dev/wallets";
+import { Ethereum } from "@thirdweb-dev/chains";
+
+const wallet = new EmbeddedWallet({
+  chain: Ethereum, //  chain to connect to
+  clientId: "YOUR_CLIENT_ID", // client ID
+});
+
+const authResult = await wallet.authenticate({
+  strategy: "google",
+});
+
+const walletAddress = await wallet.connect({ authResult });
+console.log("Connected as", walletAddress);
+```
+
+## Configuration
+
+Provide a configuration object when instantiating the `EmbeddedWallet` class.
+
+<details>
+  <summary>clientId (required)</summary>
+  <div>
+
+The embedded wallet requires a `clientId`. You can create a `clientId` by visiting the [Dashboard](https://thirdweb.com/create-api-key).
+To learn more about API keys, visit the [API key documentation](/api-keys).
+
+Must be a `string`.
+
+</div>
+</details>
+
+<details>
+  <summary>chain (required)</summary>
+  <div>
+
+The chain to connect to by default.
+
+Must be a `Chain` object, from the [`@thirdweb-dev/chains`](https://www.npmjs.com/package/@thirdweb-dev/chains) package.
+
+</div>
+</details>
+
+<details>
+  <summary>chains (optional)</summary>
+  <div>
+
+Provide an array of chains you want to support.
+
+Must be an array of `Chain` objects, from the [`@thirdweb-dev/chains`](https://www.npmjs.com/package/@thirdweb-dev/chains) package.
+
+</div>
+</details>
+
+## Methods
+
+Inherits all the public methods from the [`AbstractClientWallet`](interfaces/abstract-client-wallet) class.
+
+### authenticate
+
+Authenticate the user with any of the available auth strategies.
+
+```javascript
+const authResult = await wallet.authenticate({
+  strategy: "google",
+});
+```
+
+<details>
+  <summary>Configuration</summary>
+  <div>
+
+Choose one of the available auth strategy, which comes with different required arguments.
+
+```ts
+// email verification
+type EmailVerificationAuthParams = {
+  strategy: "email_verification";
+  email: string;
+  verificationCode: string;
+  recoveryCode?: string;
+};
+
+export type EmbeddedWalletOauthStrategy = "google" | "apple" | "facebook";
+
+type OauthAuthParams = {
+  strategy: EmbeddedWalletOauthStrategy;
+  openedWindow?: Window;
+  closeOpenedWindow?: (window: Window) => void;
+};
+
+// bring your own authentication
+type JwtAuthParams = {
+  strategy: "jwt";
+  jwt: string;
+  encryptionKey?: string;
+};
+
+// open iframe to send and input the verification code only
+type IframeOtpAuthParams = {
+  strategy: "iframe_email_verification";
+  email: string;
+};
+
+// open iframe to enter email and verification code
+type IframeAuthParams = {
+  strategy: "iframe";
+};
+```
+
+</div>
+</details>
+
+### connect
+
+After authenticating, you can connect to the wallet by passing the `authResult` to the `connect` method.
+
+```ts
+await wallet.connect({ authResult });
+```
+
+<details>
+  <summary>Configuration</summary>
+  <div>Returns the associated wallet address of the user.</div>
+</details>
+
+### getEmail
+
+Get the email associated with the currently connected wallet.
+
+```javascript
+const email = await wallet.getEmail();
+```
+
+### sendVerificationEmail
+
+Send a verification code to the user's email for verification. Use this as a prestep before calling `authenticate` with the `email_verification` strategy.
+
+```javascript
+const result = await wallet.sendVerificationEmail({
+  email: "alice@example.com",
+});
+```

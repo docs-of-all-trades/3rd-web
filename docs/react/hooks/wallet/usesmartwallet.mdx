@@ -1,0 +1,254 @@
+---
+title: useSmartWallet
+slug: /react.usesmartwallet
+displayed_sidebar: react
+sidebar_position: 9
+---
+
+Hook that allows users to connect their [Smart wallet](/wallet/smart-wallet) to your dApp.
+
+The `useSmartWallet()` hook will handle connecting both the personal wallet and the Smart Wallet.
+
+```tsx
+import { useSmartWallet } from "@thirdweb-dev/react";
+
+const Home = () => {
+  // Here we use metamask as the personal wallet
+  const { connect } = useSmartWallet(metamaskWallet(), {
+    factoryAddress: "0x...",
+    gasless: true,
+  });
+
+  return (
+    <button
+      onClick={async () =>
+        await connect();
+      }
+    >
+      Connect Smart Wallet
+    </button>
+  );
+};
+```
+
+The [smartWallet](/react/react.smartWallet) (with all personalWallets configured) need to be added in [ThirdwebProvider's supportedWallets](/react/react.thirdwebprovider#supportedwallets-optional) if you want the wallet to auto-connect on next page load.
+
+### Using [`EmbeddedWallet`](/embedded-wallet) as the personal signer
+
+You can have your users sign in with email or social and then connect their associated Smart Wallet.
+
+```tsx
+const { connect } = useSmartWallet(embeddedWallet(), {
+  factoryAddress: factoryAddress,
+  gasless: true,
+});
+
+const onClick = async () => {
+  await connect({
+    connectPersonalWallet: async (embeddedWallet) => {
+      // login with google and connect the embedded wallet
+      const authResult = await embeddedWallet.authenticate({
+        strategy: "google",
+      });
+      await embeddedWallet.connect({ authResult });
+    },
+  });
+};
+```
+
+### Using [`LocalWallet`](/wallet/local-wallet) as the personal signer
+
+You can generate wallets on device for your users and connect to the associated Smart Wallet.
+
+```tsx
+const { connect } = useSmartWallet(localWallet(), {
+  factoryAddress: "0x...",
+  gasless: true,
+});
+
+const onClick = async () => {
+  await connect({
+    connectPersonalWallet: async (localWallet) => {
+      // Generate and connect s local wallet before using it as the personal signer
+      await localWallet.generate();
+      await localWallet.connect();
+    },
+  });
+};
+```
+
+### Predicting the Smart Wallet address
+
+THe `useSmartWallet()` also returns a function to predict a smart wallet address given a personal wallet address before connecting to it.
+
+```tsx
+const { predictAddress } = useSmartWallet(localWallet(), {
+  factoryAddress: "0x...",
+  gasless: true,
+});
+
+const onClick = async () => {
+  const address = await predictAddress({
+    personalWalletAddress: "0x...",
+  });
+  console.log("Predicted Smart Wallet address", address);
+};
+```
+
+## Connect options
+
+<details>
+  <summary>connectPersonalWallet (optional)</summary>
+  <div>
+
+A function to determine how to connect to the given personal wallet. Gives a created instance of the wallet as an argument.
+
+</div>
+</details>
+
+<details>
+  <summary>accountAddress (optional)</summary>
+  <div>
+
+The specific smart wallet address to connect to.
+
+</div>
+</details>
+
+## Configuration
+
+### Mandatory properties
+
+<details>
+  <summary>personalWallet</summary>
+  <div>
+
+A wallet configuration object from [@thirdweb-dev/react](https://www.npmjs.com/package/@thirdweb-dev/react) package.
+
+Ex: `metamaksWallet()`, `coinbaseWallet()`, `walletConnectWallet()`, `embeddedWallet()`, `localWallet()`, etc.
+
+</div>
+</details>
+
+<details>
+  <summary>factoryAddress</summary>
+  <div>
+
+The address of the Smart Wallet Factory contract.
+
+Must be a `string`.
+
+</div>
+</details>
+
+<details>
+  <summary>gasless</summary>
+  <div>
+
+Whether to turn on or off gasless transactions.
+
+- If set to `true`, all gas fees will be paid by a paymaster.
+- If set to `false`, all gas fees will be paid by the Smart Wallet itself (needs to be funded).
+
+Must be a `boolean`.
+
+</div>
+</details>
+
+### Optional properties
+
+<details>
+  <summary>factoryInfo</summary>
+  <div>
+
+Customize how the Smart Wallet Factory contract is interacted with. If not provided, the default functions will be used.
+
+Must be a `object`. The object can contain the following properties:
+
+- `createAccount` - a function that returns the transaction object to create a new Smart Wallet.
+- `getAccountAddress` - a function that returns the address of the Smart Wallet contract given the owner address.
+- `abi` - optional ABI. If not provided, the ABI will be auto-resolved.
+
+Example:
+
+```javascript
+ {
+  createAccount: (factory, owner) => {
+    return factory.prepare("customCreateAccount", [
+      owner,
+      getExtraData(),
+    ]);
+  },
+  getAccountAddress(factory, owner) {
+    return factory.call("getAccountAddress", [owner]);
+  },
+  abi: [...]
+}
+```
+
+</div>
+</details>
+
+<details>
+  <summary>accountInfo</summary>
+  <div>
+
+Customize how the Smart Wallet Account contract is interacted with. If not provided, the default functions will be used.
+
+Must be a `object`. The object can contain the following properties:
+
+- `execute` - a function that returns the transaction object to execute an arbitrary transaction.
+- `getNonce` - a function that returns the current nonce of the account.
+- `abi` - optional ABI. If not provided, the ABI will be auto-resolved.
+
+Example:
+
+```javascript
+{
+  execute(account, target, value, data) {
+    return account.prepare("customExecute", [
+      target, value, data
+    ]);
+  },
+  getNonce(account) {
+    return account.call("getNonce");
+  },
+  abi: [...]
+}
+```
+
+</div>
+</details>
+
+<details>
+  <summary>bundlerUrl</summary>
+  <div>
+
+Your own bundler URL to send user operations to. Uses thirdweb's bundler by default.
+
+Must be a `string`.
+
+</div>
+</details>
+
+<details>
+  <summary>paymasterUrl</summary>
+  <div>
+
+Your own paymaster URL to send user operations to for gasless transactions. Uses thirdweb's paymaster by default.
+
+Must be a `string`.
+
+</div>
+</details>
+
+<details>
+  <summary>entryPointAddress</summary>
+  <div>
+
+The entrypoint contract address. Uses v0.6 by default.
+
+Must be a `string`.
+
+</div>
+</details>

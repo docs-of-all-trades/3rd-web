@@ -1,0 +1,85 @@
+---
+title: Getting Started
+hide_title: true
+displayed_sidebar: typescript
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import GettingStartedLiveEditor from "@components/live-code/snippets/GettingStartedLiveEditor";
+
+# Getting Started
+
+To get started, install the required dependencies into your TypeScript (or JavaScript) project.
+
+<Tabs>
+<TabItem value="existing" label="Existing Projects">
+
+```bash
+npm install @thirdweb-dev/sdk ethers@^5
+```
+
+</TabItem>
+<TabItem value="new" label="New Projects">
+
+```bash
+npx thirdweb create app
+```
+
+</TabItem>
+</Tabs>
+
+<br />
+
+:::info API Key
+You will require an API key to use thirdweb’s infrastructure services with the SDK. If you haven’t created a key yet you can do so for free from the [**thirdweb dashboard**](https://thirdweb.com/create-api-key).
+:::
+
+Instantiate the SDK using your private key to enable both read and **write** operations.
+
+```ts
+import { ThirdwebSDK } from "@thirdweb-dev/sdk";
+
+const sdk = ThirdwebSDK.fromPrivateKey(
+  process.env.PRIVATE_KEY, // Your wallet's private key (only required for write operations)
+  "ethereum",
+  {
+    clientId: "YOUR_CLIENT_ID", // Use client id if using on the client side, get it from dashboard settings
+    secretKey: "YOUR_SECRET_KEY", // Use secret key if using on the server, get it from dashboard settings
+  },
+);
+```
+
+<p style={{ opacity: 0.9, marginTop: -8 }}>
+  <i>
+    Examples templates:{" "}
+    <a href="https://github.com/thirdweb-example/node-javascript-starter">
+      Node.js
+    </a>{" "}
+    •{" "}
+    <a href="https://github.com/thirdweb-example/express-javascript-starter">
+      Express.js
+    </a>{" "}
+  </i>
+</p>
+
+<br />
+
+With the SDK instantiated, you can now deploy smart contracts, interact with them, and much more.
+
+To connect to your contract, use the SDK&rsquo;s [`getContract`](/typescript/sdk.thirdwebsdk.getcontract) method
+and the [`call`](/typescript/sdk.smartcontract.call) method to read/write data.
+
+Functions are called automatically from the wallet you instantiated the SDK with.
+
+```ts
+// Connect to your smart contract using the contract address
+const contract = await sdk.getContract("{{contract_address}}");
+
+// Call a function on your smart contract using the function name
+const name = await contract.call("myFunctionName");
+
+// Or Using the extensions API matching your contract extensions
+const allNFTs = await contract.erc721.getAll();
+const tokenSupply = await contract.erc20.totalSupply();
+```

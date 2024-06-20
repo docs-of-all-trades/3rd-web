@@ -1,0 +1,92 @@
+---
+slug: /smart-wallet
+title: Overview
+hide_title: true
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import CodeBlock from "@theme/CodeBlock";
+import ViewRepoButton from "@components/ViewRepoButton";
+import QuickstartCard from "@components/QuickstartCard";
+
+# Smart Wallet
+
+Smart wallets are programmable wallets that provide a secure and convenient digital solution for managing and storing assets. In contrast to an [EOA](https://ethereum.org/en/developers/docs/accounts/), or externally owned account, smart wallets are instead a smart contract secured by code rather than private keys.
+
+:::info
+Smart wallet factory contracts are fully compliant ERC-4337 spec. Learn more about ERC-4337 through the EIP proposal.
+:::
+
+## Features
+
+- **Operate with multiple parties** - Allow multiple owners on the same wallet to sign and transact. Assign specific roles and permissions such as signers and admins.
+- **Limit access** - Limit access to specific functionalities or data within a smart contract via scoped session keys.
+- **Execute transactions** - Execute batched and single transactions, send and receive tokens or NFTs (ERC721 and ERC1155), and more with your smart wallet.
+- **Ready-to-deploy contracts** - Easily deploy smart wallet account factories through pre-built contracts.
+- **Composable Smart Wallet API** - Usable with already deployed ERC-4337 compatible factory contracts or bundler / paymaster services.
+
+### Use Cases & Examples
+
+- Create and manage wallets for users for applications such as games to provide a seamless and secure experience
+- Configure games or applications with restrictions and gameplay tied to specific assets
+
+## Templates
+
+Get started quickly with these fully functional templates:
+
+<div className="row" style={{ marginLeft: 8 }}>
+  <div>
+    <ViewRepoButton
+      name={"js"}
+      text="Node.js Script"
+      link={"https://github.com/thirdweb-example/smart-wallet-script"}
+    />
+  </div>
+  <div style={{ marginLeft: 12 }}>
+    <ViewRepoButton
+      name={"js"}
+      text="React App"
+      link={"https://github.com/thirdweb-example/smart-wallet-react"}
+    />
+  </div>
+</div>
+
+## References
+
+By using the thirdweb SDKs, you can easily create and manage smart wallets for your users:
+
+<div className="row" style={{ marginBottom: 12, padding: 8, paddingTop: 0 }}>
+  <div className="col col--4" style={{ padding: 8 }}>
+    <QuickstartCard
+      name="Wallet SDK"
+      link="/wallet/smart-wallet"
+      image="/assets/product/wallet.png"
+      description="Using smart wallets with the Wallet SDK for low level control in JavaScript"
+    />
+  </div>
+  <div className="col col--4" style={{ padding: 8 }}>
+    <QuickstartCard
+      name="React SDK"
+      link="/react/react.smartwallet"
+      image="/assets/languages/react.png"
+      description="Using smart wallets with Connect Wallet in a React app."
+    />
+  </div>
+  <div className="col col--4" style={{ padding: 8 }}>
+    <QuickstartCard
+      name="React Native SDK"
+      link="/react-native/wallets#smart-wallet"
+      image="/assets/languages/react-native.png"
+      description="Using smart wallets with Connect Wallet for mobile apps"
+    />
+  </div>
+  <div className="col col--4" style={{ padding: 8 }}>
+    <QuickstartCard
+      name="Unity SDK"
+      link="/unity/thirdwebmanager#smart-wallet-options"
+      image="/assets/languages/unity.webp"
+      description="Using smart wallets in a game built with Unity"
+    />
+  </div>
+</div>

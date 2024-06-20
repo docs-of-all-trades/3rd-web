@@ -1,0 +1,240 @@
+---
+title: Web3 Button
+slug: /react-native.web3button
+displayed_sidebar: react-native
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import CodeBlock from "@theme/CodeBlock";
+
+Button that executes a function on a smart contract from the connected wallet when clicked.
+
+It ensures the following criteria before attempting to call the contract function:
+
+1. There is a **connected wallet**
+   (if there is not, renders a [Connect Wallet Button](/react-native/react-native.connectwallet) instead).
+2. The connected wallet is on the **correct network**
+   as specified in the [ThirdwebProvider](/react/react.thirdwebprovider#active-chain)'s
+   `activeChain` prop (if it is not, renders switch network button instead).
+
+```jsx
+import { Web3Button } from "@thirdweb-dev/react-native";
+```
+
+## Usage
+
+Render the `Web3Button` component with two required props to display the button:
+
+1. `contractAddress`: The address of the smart contract to interact with.
+2. `action`: The logic to execute when the button is clicked.
+
+```jsx
+import { Web3Button } from "@thirdweb-dev/react-native";
+
+function App() {
+  return (
+    <Web3Button
+      contractAddress="0x..." // Your smart contract address
+      action={(contract) => console.log(contract)} // Logic to execute when clicked
+    >
+      Execute Action
+    </Web3Button>
+  );
+}
+```
+
+## Configuration
+
+### contractAddress (required)
+
+The address of the smart contract to interact with.
+
+If you have _not_ imported your contract to the [dashboard](/dashboard), you must additionally specify the [`contractAbi`](#contractabi-optional) prop.
+
+```jsx
+import { Web3Button } from "@thirdweb-dev/react-native";
+
+function App() {
+  return (
+    <Web3Button
+      // highlight-next-line
+      contractAddress="0x..."
+      action={(contract) => console.log(contract)} // Logic to execute when clicked
+    >
+      Execute Action
+    </Web3Button>
+  );
+}
+```
+
+### action (required)
+
+The logic to execute when the button is clicked.
+
+The contract instance is available as the first argument of the function
+for you to interact with.
+
+```jsx
+import { Web3Button } from "@thirdweb-dev/react-native";
+
+function App() {
+  return (
+    <Web3Button
+      contractAddress="0x..."
+      // highlight-start
+      // For example, claim an NFT from this contract when the button is clicked
+      action={(contract) => contract.erc721.claim(1)}
+      // highlight-end
+    >
+      Claim NFT
+    </Web3Button>
+  );
+}
+```
+
+### theme (optional)
+
+You can pass a custom `theme` object that will control the colors of the button
+or pass one of our default themes: `light` or `dark`. We also have convenient functions to
+get a dark or light theme: `darkTheme()` and `lightTheme()`.
+
+The default value is `"dark"`.
+
+```jsx
+import { Web3Button } from "@thirdweb-dev/react-native";
+
+function App() {
+  return (
+    <Web3Button
+      contractAddress="0x..."
+      action={(contract) => console.log(contract)} // Logic to execute when clicked
+      // highlight-next-line
+      theme="light"
+    >
+      Execute Action
+    </Web3Button>>
+  );
+}
+```
+
+You could also define custom background and text color for the button:
+
+```Web3Button
+import { Web3Button, lightTheme } from '@thirdweb-dev/react-native';
+
+<Web3Button theme={lightTheme({
+   buttonBackgroundColor: 'black',
+   buttonTextColor: 'white'
+})}
+/>
+```
+
+### contractAbi (optional)
+
+The [Application Binary Interface](https://docs.soliditylang.org/en/v0.8.17/abi-spec.html) (ABI) of the contract.
+
+This is only required if you have _not_ imported your contract to the [dashboard](/dashboard).
+
+```jsx
+import { Web3Button } from "@thirdweb-dev/react-native";
+
+function App() {
+  return (
+    <Web3Button
+      contractAddress="0x..."
+      // highlight-next-line
+      contractAbi={[{ ... }]}
+      action={(contract) => console.log(contract)} // Logic to execute when clicked
+    >
+      Execute Action
+    </Web3Button>
+  );
+}
+```
+
+### onSuccess (optional)
+
+Callback function to be run when the contract method call is successful.
+
+```jsx
+import { Web3Button } from "@thirdweb-dev/react";
+
+function App() {
+  return (
+    <Web3Button
+      contractAddress="0x..."
+      action={(contract) => console.log(contract)} // Logic to execute when clicked
+      // highlight-next-line
+      onSuccess={(result) => alert("Success!")}
+    >
+      Execute Action
+    </Web3Button>
+  );
+}
+```
+
+### onError (optional)
+
+Callback function to be run when the contract method call fails.
+
+```jsx
+import { Web3Button } from "@thirdweb-dev/react";
+
+function App() {
+  return (
+    <Web3Button
+      contractAddress="0x..."
+      action={(contract) => console.log(contract)} // Logic to execute when clicked
+      // highlight-next-line
+      onError={(error) => alert("Something went wrong!")}
+    >
+      Execute Action
+    </Web3Button>
+  );
+}
+```
+
+### onSubmit (optional)
+
+Callback function to be run after the user has confirmed the transaction.
+
+```jsx
+import { Web3Button } from "@thirdweb-dev/react";
+
+function App() {
+  return (
+    <Web3Button
+      contractAddress="0x..."
+      action={(contract) => console.log(contract)} // Logic to execute when clicked
+      // highlight-next-line
+      onSubmit={() => console.log("Transaction submitted")}
+    >
+      Execute Action
+    </Web3Button>
+  );
+}
+```
+
+### isDisabled (optional)
+
+Option to disable the button.
+
+By default, the button is disabled and shows a spinner icon while the transaction is executing.
+
+```jsx
+import { Web3Button } from "@thirdweb-dev/react";
+
+function App() {
+  return (
+    <Web3Button
+      contractAddress="0x..."
+      action={(contract) => console.log(contract)} // Logic to execute when clicked
+      // highlight-next-line
+      isDisabled
+    >
+      Execute Action
+    </Web3Button>
+  );
+}
+```

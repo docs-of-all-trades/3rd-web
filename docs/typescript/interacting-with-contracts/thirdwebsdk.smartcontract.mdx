@@ -1,0 +1,103 @@
+---
+title: Connect to a Contract
+slug: /sdk.thirdwebsdk.smartcontract
+---
+
+Connect to a deployed smart contract to start interacting with it.
+
+The ABI of the smart contract is resolved automatically for contracts deployed or imported
+using the [dashboard](/dashboard).
+
+## Usage
+
+```javascript
+// Instantiate the SDK in either read or read-write mode
+const sdk = new ThirdWebSDK("ethereum");
+
+// Connect to your smart contract using the contract address.
+const contract = await sdk.getContract("0x...");
+```
+
+:::tip Generate
+
+To preload the ABI of the smart contract, run [npx thirdweb generate](/cli/generate) in your project.
+
+This is recommended to improve performance and provide type-safety when interacting with your smart contract.
+
+:::
+
+## Configuration
+
+### address (required)
+
+The address of the smart contract you want to connect to.
+
+```javascript
+const contract = await sdk.getContract(
+  // highlight-next-line
+  "0x...", // The address of your smart contract
+);
+```
+
+:::info Import
+If your smart contract was not deployed using thirdweb, you&rsquo;ll need to import it using the [dashboard](/dashboard), or provide
+the [ABI](#abi) as a second parameter.
+:::
+
+### abi (optional)
+
+Optionally, (if you don&rsquo;t want to use the import feature),
+you can provide your smart contract&rsquo;s ABI to the second parameter of the `getContract` method.
+Useful when developing on a [local node](/typescript/sdk.thirdwebsdk#local-nodes),
+where it may be faster to use the ABI than to import the contract using the [dashboard](/dashboard).
+
+The ABI is only necessary if you have not deployed your contract with, or imported your contract
+to the thirdweb dashboard.
+
+```javascript
+const contract = await sdk.getContract(
+  "0x...", // The address of your smart contract
+  // highlight-next-line
+  abi, // The ABI of your smart contract
+);
+```
+
+### Return Value
+
+<details>
+<summary>Return Value</summary>
+<div>
+
+The `getContract` method returns an instance of the `SmartContract` class.
+
+This class contains all the possible high level extension functionality, but each extension can only be used if your contract implements them. When trying to call an extension function on a contract that does not implement it, the SDK will inform you of the missing extension to implement.
+
+Raw contract functions can also be called using the `contract.call("functionName", [...args], optionalOverrides)` API.
+
+To get a full list of SDK functions available for a contract, consult the corresponding contract page on the dashboard: `https://thirdweb.com/<chain>/<contractAddress>`
+
+```typescript
+{
+  events: ContractEvents<TContract>; // See "Contract Events"
+  interceptor: ContractInterceptor<TContract>; // See "Contract Interceptor"
+  encoder: ContractEncoder<TContract>; // Internal usage.
+  estimator: GasCostEstimator<TContract>; // See "Gas Cost Estimator"
+  publishedMetadata: ContractPublishedMetadata<TContract>; // See "Publish" documentation
+  abi: ContractInterface; // The ABI of the smart contract
+  metadata: ContractMetadata<BaseContract, any>; // See "Contract Metadata" extension
+  royalties: ContractRoyalty<IRoyalty, any>; // See "Royalties" extension
+  roles: ContractRoles<IPermissions, any>; // See "Permissions" extension
+  sales: ContractPrimarySale<IPrimarySale>; // See "Primary Sale" extension
+  platformFees: ContractPlatformFee<IPlatformFee>; // See "Platform Fees" extension
+  owner: ContractOwner<Ownable>; // See "Ownable" extension
+  erc20: Erc20; // See "ERC20" extension section
+  erc721: Erc721; // See "ERC721" extension section
+  erc1155: Erc1155; // See "ERC1155" extension section
+  chainId: number; // The chain ID of the network the contract is deployed on
+  getAddress(): string; // Function to get the address of the contract
+  call(functionName: string, args: unknown[], CallOverrides]): Promise<any>; // Call a function on the contract
+}
+```
+
+</div>
+</details>

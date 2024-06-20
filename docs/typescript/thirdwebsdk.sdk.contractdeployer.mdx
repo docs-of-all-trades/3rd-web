@@ -1,0 +1,231 @@
+---
+title: Contract Deployer
+slug: /sdk.contractdeployer
+toc_max_heading_level: 2 # Show up to h2 in table of contents (default is up to h3)
+---
+
+Deploy smart contracts from the connected wallet.
+
+## deployBuiltInContract
+
+Deploy one of thirdweb&rsquo;s [prebuilt contracts](https://portal.thirdweb.com/pre-built-contracts).
+
+```javascript
+const txResult = await sdk.deployer.deployBuiltInContract(
+  "{{contract-type}}",
+  {
+    name: "My Contract",
+    primary_sale_recipient: "{{wallet_address}}",
+    voting_token_address: "{{wallet_address}}", // Only used for Vote
+  },
+  version,
+);
+```
+
+<details>
+    <summary>Configuration</summary>
+    <div>
+
+#### contractType
+
+The name of the contract to deploy.
+
+Must be one of the following `string` values:
+
+```typescript
+"nft-drop" |
+  "edition-drop" |
+  "edition" |
+  "marketplace" |
+  "marketplace-v3" |
+  "multiwrap" |
+  "nft-collection" |
+  "pack" |
+  "signature-drop" |
+  "split" |
+  "token-drop" |
+  "token" |
+  "vote";
+```
+
+### contractMetadata
+
+An object containing the metadata for the contract to deploy.
+
+```typescript
+{
+  // Required parameters
+  name: "My Contract", // Name of the contract
+  primary_sale_recipient: "{{wallet_address}}", // Wallet address to receive funds from sales
+  voting_token_address: "{{wallet_address}}", // Only used for Vote
+
+  // Optional metadata
+  app_uri: "https://example.com", // Website of your contract dApp
+  description: "This is a great contract", // Description of your contract
+  external_link: "https://example.com", // External link to view contract info on your website
+  symbol: "MYCON", // Symbol of the contract tokens
+  image: "https://some-image-here.png", // Image to use for the contract
+
+  // Optional Platform fee information
+  platform_fee_basis_points: 100,
+  platform_fee_recipient: "{{wallet_address}}",
+
+  // Optional Royalty fee information
+  fee_recipient: "{{wallet_address}}",
+  seller_fee_basis_points: 100,
+
+  // Optional Vote specific parameters
+  proposal_token_threshold: 100,
+  voting_delay_in_blocks: 100,
+  voting_period_in_blocks: 100,
+  voting_quorum_fraction: 0.5,
+
+  // Optional split specific parameters
+  recipients: [
+    {
+      address: "{{wallet_address}}",
+      sharesBps: 100,
+    },
+  ],
+
+  // Optional Gasless specific parameters
+  trusted_forwarders: ["{{wallet_address}}"],
+};
+```
+
+### version (optional)
+
+A `string` that needs to match the version displayed in the contract's publish page - or "latest" for the latest version.
+Defaults to "latest" if not specified.
+
+</div>
+</details>
+
+## deployPublishedContract
+
+Deploys any published contract
+
+```javascript
+const txResult = await sdk.deployer.deployPublishedContract(
+  "{{publisher_address_or_ens}}",
+  "{{contract_name}}",
+  [param1, param2],
+  version,
+);
+```
+
+<details>
+
+#### publisher address
+
+address or ENS of the publisher address. ex: deployer.thirdweb.eth
+
+### contract name
+
+the name of the published contract to deploy. ex: TokenERC721
+
+### constructor arguments
+
+array of constructor arguments for the contract.
+
+### version (optional)
+
+A `string` that needs to match the version displayed in the contract's publish page - or "latest" for the latest version.
+Defaults to "latest" if not specified.
+
+</details>
+
+## deployProxy
+
+Deploy a proxy contract of a given implementation directly
+
+```javascript
+const txResult = await sdk.deployer.deployProxy(
+  "{{implementation_contract_address}}",
+  implementationAbi,
+  "initialize",
+  [1, 2, 3],
+);
+```
+
+<details>
+    <summary>Configuration</summary>
+    <div>
+
+#### implementationAddress
+
+The address of the implementation contract to deploy.
+
+Must be a `string`.
+
+#### implementationAbi
+
+The ABI of the implementation contract to deploy.
+
+Must be a `ContractInterface`.
+
+#### initializeFunction
+
+The name of the function to call on the implementation contract after deployment.
+
+Must be a `string`.
+
+#### initializeArgs
+
+The arguments to pass to the `initializeFunction` function.
+
+Must be an `Array<any>`.
+
+</div>
+</details>
+
+## deployViaFactory
+
+Deploy a proxy contract of a given implementation via the given factory.
+
+```javascript
+const txResult = await sdk.deployer.deployViaFactory(
+  "{{factory_contract_address}}",
+  "{{implementation_contract_address}}",
+  implementationAbi,
+  "initialize",
+  [1, 2, 3],
+);
+```
+
+<details>
+    <summary>Configuration</summary>
+    <div>
+
+#### factoryAddress
+
+The address of the factory contract to deploy via.
+
+Must be a `string`.
+
+#### implementationAddress
+
+The address of the implementation contract to deploy.
+
+Must be a `string`.
+
+#### implementationAbi
+
+The ABI of the implementation contract to deploy.
+
+Must be a `ContractInterface`.
+
+#### initializeFunction
+
+The name of the function to call on the implementation contract after deployment.
+
+Must be a `string`.
+
+#### initializeArgs
+
+The arguments to pass to the `initializeFunction` function.
+
+Must be an array of `any` values.
+
+</div>
+</details>
